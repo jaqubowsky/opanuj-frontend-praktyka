@@ -4,7 +4,7 @@ import {
   MESSAGE_ERROR_INVALID_INT,
   MESSAGE_SUCCESS_VALID_INT,
 } from './messages';
-import { NumericValidationMethod, isValidInteger } from './methods';
+import { type NumericValidationMethod, isValidInteger } from './methods';
 
 export function validate(
   input: string,
