@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CharacterCardComponent } from '../../components/character-card/character-card.component';
 import { CharacterListComponent } from '../../components/character-list/character-list.component';
 import { GenderSelectComponent } from '../../components/gender-select/gender-select.component';
@@ -9,21 +9,22 @@ import { SortSelectComponent } from '../../components/sort-select/sort-select.co
 import { CharacterSearchService } from '../../services/character-search.service';
 
 @Component({
-    selector: 'app-character-search-container',
-    imports: [
-        SearchTitleComponent,
-        NameFieldComponent,
-        GenderSelectComponent,
-        SortSelectComponent,
-        CharacterListComponent,
-        CharacterCardComponent,
-        CommonModule,
-    ],
-    templateUrl: './character-search-container.component.html',
-    styleUrl: './character-search-container.component.scss'
+  selector: 'app-character-search-container',
+  imports: [
+    SearchTitleComponent,
+    NameFieldComponent,
+    GenderSelectComponent,
+    SortSelectComponent,
+    CharacterListComponent,
+    CharacterCardComponent,
+    CommonModule,
+  ],
+  templateUrl: './character-search-container.component.html',
+  styleUrl: './character-search-container.component.scss',
 })
 export class CharacterSearchContainerComponent {
   showRickOnly = signal(false);
+
   characters = computed(() => {
     if (this.showRickOnly()) {
       return this.characterSearchService
@@ -34,18 +35,7 @@ export class CharacterSearchContainerComponent {
     }
   });
 
-  constructor(private characterSearchService: CharacterSearchService) {
-    effect(() => {
-      console.log('showRickOnly changed to', this.showRickOnly());
-    });
-
-    effect(() => {
-      console.log(
-        'characters changed to',
-        this.characterSearchService.characters()
-      );
-    });
-  }
+  constructor(private characterSearchService: CharacterSearchService) {}
 
   get name(): string {
     return this.characterSearchService.name;
