@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { IoMdAdd, IoMdClose, IoMdRemove } from 'react-icons/io';
 
-import type { CartItem as CartItemType } from '../types/CartItem';
 import { CartContext } from '../contexts/CartContext';
+import type { CartItem as CartItemType } from '../types/CartItem';
 
 const CartItem = ({ item }: { item: CartItemType }) => {
   const { removeFromCart, addToCart, decreaseAmount } = useContext(CartContext);
