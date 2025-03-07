@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import UsersList from './components/UsersList';
-import StatusStats from './components/StatusStats';
 import AddUserDialog from './components/AddUserDialog';
+import StatusStats from './components/StatusStats';
+import UsersList from './components/UsersList';
 
 function App() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,10 +34,12 @@ function App() {
       <StatusStats />
       <UsersList />
 
-      <AddUserDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
+      {isDialogOpen ? (
+        <AddUserDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+        />
+      ) : null}
     </main>
   );
 }

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useCreateUser } from '../api/hooks/useCreateUser';
+import { STATUSES } from '../utils/statusColors';
 
 interface AddUserDialogProps {
   isOpen: boolean;
@@ -7,55 +9,39 @@ interface AddUserDialogProps {
 
 const AddUserDialog = ({ isOpen, onClose }: AddUserDialogProps) => {
   const [name, setName] = useState('');
-  const [status, setStatus] = useState('New');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState(STATUSES.NEW);
+  const [validationError, setValidationError] = useState('');
 
-  const statuses = [
-    'New',
-    'Contacted',
-    'In Progress',
-    'Qualified',
-    'Converted',
-    'Rejected',
-  ];
+  const {
+    mutate: createUser,
+    reset,
+    isError,
+    error: mutationError,
+    isPending,
+  } = useCreateUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim()) {
-      setError('Name is required');
-      return;
-    }
+    setValidationError('');
+    if (!name.trim()) return setValidationError('Name is required.');
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('http://localhost:3000/api/data/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, status }),
-      });
-
-      if (!response.ok) throw new Error('Failed to add user');
-
-      closeDialog();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to add user');
-    } finally {
-      setLoading(false);
-    }
+    const data = { name, status };
+    createUser(data, { onSuccess: closeDialog });
   };
 
   const closeDialog = () => {
     setName('');
-    setStatus('New');
-    setError(null);
+    setStatus(STATUSES.NEW);
+    reset();
     onClose();
   };
+
+  const error = isError
+    ? mutationError instanceof Error
+      ? mutationError.message
+      : 'Something went wrong. Please try again...'
+    : validationError;
 
   if (!isOpen) return null;
 
@@ -116,7 +102,7 @@ const AddUserDialog = ({ isOpen, onClose }: AddUserDialogProps) => {
               onChange={(e) => setStatus(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
-              {statuses.map((statusOption) => (
+              {Object.values(STATUSES).map((statusOption) => (
                 <option key={statusOption} value={statusOption}>
                   {statusOption}
                 </option>
@@ -134,10 +120,10 @@ const AddUserDialog = ({ isOpen, onClose }: AddUserDialogProps) => {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isPending}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Adding...' : 'Add Contact'}
+              {isPending ? 'Adding...' : 'Add Contact'}
             </button>
           </div>
         </form>
